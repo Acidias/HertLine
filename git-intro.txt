@@ -1,0 +1,3 @@
+open VS -> Terminal -> redirect to directory where you want to push
+type: git clone https://github.com/Acidias/HertLine.git
+
