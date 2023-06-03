@@ -1,7 +1,6 @@
 import React from 'react'
 import { Stack, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { signInWithEmailAndPassword } from "firebase/auth";
 
 
 import { View, Text, ScrollView, SafeAreaView, ImageBackground, Image, StyleSheet, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
@@ -10,17 +9,25 @@ import { View, Text, ScrollView, SafeAreaView, ImageBackground, Image, StyleShee
 import CustomInput from '../../components/CustomInput'
 import CustomButton from '../../components/CustomButton'
 import BackButton from '../../components/BackButton'
+
+//Auth
 import auth from '../../config/firebase.js';
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 
-const SignInScreen = () => {
+const InputFieldsStyle = {
+  borderWidth: 1,
+};
+
+const RegisterScreen = () => {
   const router = useRouter();
 
 
-  //console.log("Connection Successfull on SignInScreen: ", auth);
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [passwordAgain, setPasswordAgain] = useState('');
+
+
 
   const handleEmailChange = (text) => {
     setEmail(text);
@@ -30,28 +37,40 @@ const SignInScreen = () => {
     setPassword(text);
   };
 
-
-
-  const handleForgotPassword = () => {
-    // Implement your "Forgot Password" functionality here
-    console.log('Forgot Password button pressed');
-    router.push('/src/screens/ForgotPassword')
-
+  const handlePasswordAgainChange = (text) => {
+    setPasswordAgain(text);
   };
 
-  const Submit = async () => {
+
+  const SubmitRegister = async () => {
+    // Implement your "Submit" functionality here
+    console.log('Register button pressed');
     console.log("Email: ", email);
     console.log("Password: ", password);
-
-    try{
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    console.log("Password Again: ", passwordAgain);
+    if(password == passwordAgain &&
+      password != '' &&
+      passwordAgain != '' &&
+      email != '' &&
+      email.includes('@') &&
+      email.includes('.') &&
+      email.length > 5 &&
+      password.length > 5){
+      console.log("All good. Registering...");
+      try{
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         // Signed in
         const user = userCredential.user;
-        console.log('User signed in: '+ user.email);
-        router.push('/src/screens/HomeScreen');
-    } catch (error) {
-      console.log(error);
-    }
+        console.log('User registered: '+ user.email);
+        router.push('/src/screens/SignInScreen');
+      } catch (error) {
+        console.log(error);
+      }
+      } else if(password != passwordAgain){
+        alert("Passwords do not match");
+      } else if(email == '' || !email.includes('@') || !email.includes('.') || email.length < 5){
+        alert("Invalid email");
+      }
   };
 
 
@@ -75,8 +94,8 @@ const SignInScreen = () => {
                         onChangeText={handleEmailChange}
                         inputStyle={styles.customInputStyle}
                         icon={{
-                          name: 'user',
-                          type: 'font-awesome',
+                          name: 'email',
+                          type: 'entypo',
                           color: 'purple',
                         }}
                       />
@@ -93,13 +112,22 @@ const SignInScreen = () => {
                         }}
                         secureTextEntry
                       />
-                      <TouchableOpacity onPress={handleForgotPassword}>
-                        <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-                      </TouchableOpacity>
+                      <CustomInput
+                        placeholder="Password Again"
+                        value={passwordAgain}
+                        onChangeText={handlePasswordAgainChange}
+                        inputStyle={styles.customInputStyle}
+                        icon={{
+                          name: 'lock',
+                          type: 'font-awesome',
+                          color: 'purple',
+                        }}
+                        secureTextEntry
+                      />
 
                       <CustomButton
-                        title="Sign In"
-                        onPress={Submit}
+                        title="Register"
+                        onPress={SubmitRegister}
                       />
                     </View>
                 </View>
@@ -173,4 +201,4 @@ overlay: {
   },
 });
 
-export default SignInScreen
+export default RegisterScreen

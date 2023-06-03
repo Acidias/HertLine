@@ -4,12 +4,22 @@ import { Stack, useRouter } from 'expo-router';
 import { useNavigation } from 'expo-router';
 import { userRouter } from 'expo-router';
 import { Link } from 'expo-router';
+import { useState } from 'react';
+import { useEffect } from 'react';
 
-//Files
-import SignInScreen from './src/screens/SignInScreen';
+//My Files
+import CustomButton from './src/components/CustomButton';
+import HomeScreen from './src/screens/HomeScreen';
+
+//Auth
+import auth from './src/config/firebase.js';
+import { createUserWithEmailAndPassword } from "firebase/auth";
+
 
 const Home = () => {
     const router = useRouter();
+
+    console.log(auth);
 
     const navigateLogin = () => {
         console.log("Login button pressed");
@@ -18,44 +28,41 @@ const Home = () => {
 
     const navigateRegister = () => {
         console.log("Register button pressed");
+        router.push('/src/screens/RegisterScreen');
     };
-    
-    return (
-        <ImageBackground source={require('./src/screens/assets/images/doc.jpg')} style={styles.imageBackground}>
-            <SafeAreaView style={styles.root}>
-                <Stack.Screen
-                    options={{
-                    headerShown: false,
-                    }}
-                />
-                {/* Welcome & Logo */}
-                <View style={styles.overlay}>
-                    <Text style={styles.overlayText}>Welcome to</Text>
-                    <Image source={require('./src/screens/assets/images/logo.png')} style={styles.logo} />
-                
-                
-                    {/* Buttons */}
-                    <View style={styles.buttonContainer}>
-                        <TouchableOpacity onPress={navigateLogin}>
-                            <View style={styles.button}>
-                                <Text style={styles.buttonText}>Sign In</Text>
-                            </View>
-                        </TouchableOpacity>
 
-                        <TouchableOpacity onPress={navigateRegister}>
-                            <View style={styles.button}>
-                                <Text style={styles.buttonText}>Register</Text>
-                            </View>
-                        </TouchableOpacity>
+
+        return (
+            <ImageBackground source={require('./src/screens/assets/images/doc.jpg')} style={styles.imageBackground}>
+                <SafeAreaView style={styles.root}>
+                    <Stack.Screen
+                        options={{
+                        headerShown: false,
+                        }}
+                    />
+                    {/* Welcome & Logo */}
+                    <View style={styles.overlay}>
+                        <Text style={styles.overlayText}>Welcome to</Text>
+                        <Image source={require('./src/screens/assets/images/logo.png')} style={styles.logo} />
+
+                        {/* Buttons */}
+                        <View style={styles.buttonContainer}>
+                            <CustomButton 
+                                title="Sign In"
+                                onPress={navigateLogin}
+                            />
+
+                            <CustomButton
+                                title="Register"
+                                onPress={navigateRegister}
+                            />
+                        </View>
                     </View>
-                
-                </View>
+                </SafeAreaView>
+            </ImageBackground>
+        );
 
-
-
-            </SafeAreaView>
-        </ImageBackground>
-    );  
+    
 };
 
 const styles = StyleSheet.create({
@@ -88,21 +95,7 @@ const styles = StyleSheet.create({
         width: 350,
         height: 200,
         resizeMode: 'contain',
-      },
-      button: {
-        width: 200,
-        height: 40,
-        backgroundColor: 'purple',
-        borderRadius: 20,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 10,
-      },
-      buttonText: {
-        color: 'white',
-        fontSize: 16,
-        fontWeight: 'bold',
-      },
+      }
 });
 
 export default Home;
